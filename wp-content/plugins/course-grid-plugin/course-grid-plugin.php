@@ -133,8 +133,8 @@ function cgp_display_courses() {
                     <td><?php echo esc_html($course['name']); ?></td>
                     <td><?php echo esc_html($course['course_code']); ?></td>
                     <td><?php echo esc_html($course['workflow_state']); ?></td>
-                    <td><?php echo esc_html($course['start_date']); ?></td>
-                    <td><?php echo esc_html($course['end_date']); ?></td>
+                    <td><?php echo esc_html($course['start_at']); ?></td>
+                        <td><?php echo esc_html($course['end_at']); ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -226,10 +226,14 @@ function cgp_uninstall() {
 <style>
     thead {
         background-color: black !important;
-        color: white;
+        color: white !important;
     }
 
     td {
         border: solid 1px #000;
+    }
+
+    th{
+        color: white !important;
     }
 </style>
