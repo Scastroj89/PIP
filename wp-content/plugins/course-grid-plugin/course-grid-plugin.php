@@ -212,7 +212,13 @@ function cgp_enqueue_data_tables($hook)
 }
 add_action('admin_enqueue_scripts', 'cgp_enqueue_data_tables');
 
+register_uninstall_hook(__FILE__, 'cgp_uninstall');
 
+// Uninstall callback function
+function cgp_uninstall() {
+    // Delete plugin options
+    delete_option('cgp_api_url');
+}
 ?>
 
 
