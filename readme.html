@@ -1,3 +1,10 @@
+Local Environment Created using Local from WPEngine
+Web Server: nginx
+PHP Version: 8.1.29
+MySQL Version: 8.0.16
+Wordpress Version: 6.6.1
+
+
 Answers:
 - Explain the role of hooks (actions and filters) in extending WooCommerce functionality.
 -- Basically with hooks we can interact with the data, with actions we can inject code through functions without modifying the source code, whenever is needed by some call. With filters we can pull already existing data and modify it before printing it into the front-end (example: calling a price and modifying it before rendering it into the cart
@@ -5,3 +12,15 @@ Answers:
 - Describe the potential performance implications of excessive custom fields on product pages in a large e-commerce site.
 -- In a few words, all of this will be represented in performance, every time we create a CF it has to be storaged into the DB, and called through queries so we could be using a huge ammount of resources because of this.
 
+
+- Explain your approach to optimizing the plugin for a high-traffic e-commerce site (500,000+ monthly visitors, 50,000+ products).
+-- Currently the plugin only reorganizes data so it would depend on what uses would you like it to have. In case that you may want that it storages data, we would need to set a correct database functionality so it works on the most efficient way.
+
+- Describe three potential security vulnerabilities specific to e-commerce plugins and how you would address them.
+-- For plugins specifically, I think that the biggest vulnerability would be some kind of SQL injection, in this case it would be directly through the API input if it was accesible from site's front. In that case I'd implement some kind of OAuth verification.
+-- That's the only one that comes to my mind RN.
+
+- How would you ensure this plugin scales effectively as the product catalog and user base grow?
+-- Since this plugin doesn't need to do anything difficult, that would depend on the future uses it may have. But usually every plugin has the same answer: doing a good work setting the data tables and creating the possible queries to it.
+
+THANKS!
