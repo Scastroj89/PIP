@@ -11,8 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Register and enqueue necessary scripts and styles
-function cgp_enqueue_scripts($hook)
-{
+function cgp_enqueue_scripts($hook) {
     if ($hook !== 'toplevel_page_course-grid') {
         return;
     }
@@ -22,8 +21,7 @@ function cgp_enqueue_scripts($hook)
 add_action('admin_enqueue_scripts', 'cgp_enqueue_scripts');
 
 // Add admin menu
-function cgp_add_admin_menu()
-{
+function cgp_add_admin_menu() {
     add_menu_page(
         'Course Grid',
         'Course Grid',
@@ -32,12 +30,19 @@ function cgp_add_admin_menu()
         'cgp_display_admin_page',
         'dashicons-admin-generic'
     );
+    add_submenu_page(
+        'course-grid',
+        'Settings',
+        'Settings',
+        'manage_options',
+        'course-grid-settings',
+        'cgp_display_settings_page'
+    );
 }
 add_action('admin_menu', 'cgp_add_admin_menu');
 
 // Display admin page content
-function cgp_display_admin_page()
-{
+function cgp_display_admin_page() {
     ?>
     <div class="wrap">
         <h1>Course Grid</h1>
@@ -48,10 +53,53 @@ function cgp_display_admin_page()
     cgp_display_courses();
 }
 
+// Display settings page
+function cgp_display_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1>Course Grid Settings</h1>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('cgp_settings_group');
+            do_settings_sections('course-grid-settings');
+            submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Register and initialize settings
+function cgp_register_settings() {
+    register_setting('cgp_settings_group', 'cgp_api_url');
+
+    add_settings_section(
+        'cgp_settings_section',
+        'API Settings',
+        null,
+        'course-grid-settings'
+    );
+
+    add_settings_field(
+        'cgp_api_url',
+        'API Endpoint URL',
+        'cgp_api_url_callback',
+        'course-grid-settings',
+        'cgp_settings_section'
+    );
+}
+add_action('admin_init', 'cgp_register_settings');
+
+// Callback function for API URL field
+function cgp_api_url_callback() {
+    $api_url = get_option('cgp_api_url', 'https://lmstest.acue.org/ACUE-microcourselist.json');
+    echo '<input type="text" id="cgp_api_url" name="cgp_api_url" value="' . esc_attr($api_url) . '" size="50" />';
+}
+
 // Fetch course data from API
-function cgp_fetch_courses()
-{
-    $response = wp_remote_get('https://lmstest.acue.org/ACUE-microcourselist.json');
+function cgp_fetch_courses() {
+    $api_url = get_option('cgp_api_url', 'https://lmstest.acue.org/ACUE-microcourselist.json');
+    $response = wp_remote_get($api_url);
     if (is_wp_error($response)) {
         return array();
     }
@@ -60,8 +108,7 @@ function cgp_fetch_courses()
 }
 
 // Display the course grid
-function cgp_display_courses()
-{
+function cgp_display_courses() {
     $courses = cgp_fetch_courses();
     if (empty($courses)) {
         echo '<p>No courses available.</p>';
@@ -86,8 +133,8 @@ function cgp_display_courses()
                     <td><?php echo esc_html($course['name']); ?></td>
                     <td><?php echo esc_html($course['course_code']); ?></td>
                     <td><?php echo esc_html($course['workflow_state']); ?></td>
-                    <td><?php echo esc_html($course['start_at']); ?></td>
-                    <td><?php echo esc_html($course['end_at']); ?></td>
+                    <td><?php echo esc_html($course['start_date']); ?></td>
+                    <td><?php echo esc_html($course['end_date']); ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -164,7 +211,12 @@ function cgp_enqueue_data_tables($hook)
     wp_enqueue_style('data-tables-css', 'https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css');
 }
 add_action('admin_enqueue_scripts', 'cgp_enqueue_data_tables');
+
+
 ?>
+
+
+
 <style>
     thead {
         background-color: black !important;
